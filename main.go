@@ -45,7 +45,46 @@ func main() {
 
 	for i, source := range jsMap.SourcesContent {
 		lines := strings.Split(source, "\n")
-		output := fmt.Sprintf("%s\\%s%d.js", GetCurrentDir(), jsMap.File, i)
+		output := fmt.Sprintf(
+			"%s\\%s",
+			GetCurrentDir(),
+			strings.ReplaceAll(
+				strings.ReplaceAll(
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								jsMap.Sources[i],
+								"webpack://", "",
+							),
+							" ", "_",
+						),
+						"./", "",
+					),
+					"?", "",
+				),
+				"\u0000#/", "",
+			),
+		)
+
+		if strings.Contains(output, "/") {
+			ps := strings.Split(output, "/")
+			slice := ps[0 : len(ps)-1]
+			var dir string
+			for _, str := range slice {
+				dir += str + "/"
+			}
+
+			println("DIR: " + dir)
+			err = os.MkdirAll(dir, os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		if !strings.Contains(output, ".js") && !strings.Contains(output, ".ts") {
+			output += ".js"
+		}
+
 		_, err = os.Create(output)
 		if err != nil {
 			panic(err)
@@ -64,7 +103,6 @@ func main() {
 			}
 		}
 
-		_, err = outputFile.WriteString("\n")
 		err = outputFile.Close()
 		if err != nil {
 			panic(err)
