@@ -53,10 +53,13 @@ func main() {
 					strings.ReplaceAll(
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								jsMap.Sources[i],
-								"webpack://", "",
+								strings.ReplaceAll(
+									jsMap.Sources[i],
+									"webpack://", "",
+								),
+								" ", "_",
 							),
-							" ", "_",
+							"../", "",
 						),
 						"./", "",
 					),
